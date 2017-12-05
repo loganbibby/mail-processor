@@ -26,3 +26,27 @@ Every host is different about setting MX records, but they all need a _priority_
 A records translate a domain name into the IP of a server -- usually for HTTP requests. You'll only need to set this up for the domain you'll want to use for the HTTP API. And it's okay just to use an IP address directly.
 
 The A record will only need the IP address.
+
+## API Requests
+The API is a basic HTTP-based server. You can use anything, but I recommend `requests`.
+
+All the magic happens at `/`, so that's where you make your GET request.
+
+The following parameters can be used to search for messages:
+* `to`: Searches the To line.
+* `from`: Searches the From line.
+* `subject`: Searches the Subject line.
+* `body`: Search the message body.
+* `before`: Uses a date/time string in `YYYY-MM-DDTHH:MM:SS` format to search the timestamps.
+
+A search for _google.com_ in the From line would be something like: `0.0.0.0/?to=google.com`. Easy peasy.
+
+The request will return a dictionary (in Python, you'll use `json.loads(response)` to transform it into a dictionary) with two keys: `count` is just the number of messages returned and `messages` is a list of message dictionaries.
+
+The message dictionary will have the following keys:
+* `timestamp`: date string in `YYYY-MM-DD HH:MM:SS` format (use `%Y-%m-%d %H:%M:%S` to convert using `strftime`)
+* `from`: a string of the sender
+* `recipients`: a list of recipients
+* `subject`: the subject
+* `body`: the full body of the message (HTML is chosen over text)
+* `headers`: a dictionary of all the headers
